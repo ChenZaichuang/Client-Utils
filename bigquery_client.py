@@ -1,10 +1,10 @@
-import logging
 import os
 
-from config import Config
+from google.cloud import bigquery
+
 from python_utils.logger import CustomLogger
 from python_utils.thread_pool import ThreadPool
-from google.cloud import bigquery
+from .config import Config
 
 
 class BigqueryClient:
