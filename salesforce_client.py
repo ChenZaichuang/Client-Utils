@@ -114,3 +114,29 @@ class SalesforceClient:
             for record in data:
                 pool.apply_async(self._dml_record, (object_api_name, operation, record))
             pool.get_results_order_by_index(raise_exception=True)
+
+    def get_all_active_projects(self):
+        return self.query_records("select Id, pse__Opportunity__c, pse__Is_Billable__c from pse__Proj__c where Project_Code_FF__c != null and pse__Is_Active__c = true and pse__Closed_for_Time_Entry__c = false and pse__Closed_for_Expense_Entry__c = false and pse__Opportunity__r.pse__Primary_Project__c != null and (not (pse__Project_Type__c = 'Internal' and pse__Region__r.Name = 'ThoughtWorks' and pse__Allow_Timecards_Without_Assignment__c = true))")
+
+    def get_res_req_by_proj_id(self, proj_id):
+        return self.query_records(f"select Jigsaw_ID__c, pse__Start_Date__c, pse__End_Date__c, pse__Resource_Role__c, Custom_Resource_Role__c, (select Start_Date__c, End_Date__c, Bill_Rate__c, Region__r.Name from Resource_Request_Working_Offices__r) from pse__Resource_Request__c where pse__Project__c = '{proj_id}'")
+
+    def get_ass_by_proj_id(self, proj_id):
+        return self.query_records(f"select Id, Jigsaw_Assignment_ID__c, pse__Start_Date__c, pse__End_Date__c, Resource_Request__r.Jigsaw_ID__c, pse__Percent_Allocated__c, Shadow__c, pse__Bill_Rate__c from pse__Assignment__c where pse__Project__c = '{proj_id}' and pse__Status__c != 'Closed'")
+
+    def get_projects_by_oppo_or_proj_ids(self, oppo_ids=None, proj_ids=None):
+        assert oppo_ids is not None or proj_ids is not None
+        pool = self.pool.new_pool_status()
+        if oppo_ids is not None:
+            for id in oppo_ids:
+                pool.apply_async(self.query_records, (f"select Id, pse__Opportunity__c, pse__Is_Billable__c from pse__Proj__c where Project_Code_FF__c != null and pse__Is_Active__c = true and pse__Closed_for_Time_Entry__c = false and pse__Closed_for_Expense_Entry__c = false and pse__Opportunity__c = '{id}' and pse__Opportunity__r.pse__Primary_Project__c != null",))
+        else:
+            for id in proj_ids:
+                pool.apply_async(self.query_records, (f"select Id, pse__Opportunity__c, pse__Is_Billable__c from pse__Proj__c where Project_Code_FF__c != null and pse__Is_Active__c = true and pse__Closed_for_Time_Entry__c = false and pse__Closed_for_Expense_Entry__c = false and Id = '{id}' and pse__Opportunity__r.pse__Primary_Project__c != null",))
+        return [res[0] for res in pool.get_threads_result() if len(res) > 0]
+
+    def get_all_employee_ids(self):
+        return {employee["Employee_ID__c"] for employee in self.query_records("select Employee_ID__c from Contact where RecordType.Name = 'Resource' and pse__Is_Resource__c = true and pse__Is_Resource_Active__c = true")}
+
+    def get_all_employees(self):
+        return self.query_records("select Id, pse__Start_Date__c, Department__c from Contact where RecordType.Name = 'Resource' and pse__Start_Date__c != null")

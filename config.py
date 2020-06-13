@@ -6,7 +6,8 @@ class Config:
         "platform_host": "",
         "okta_host": "",
         "token_path": "",
-        "okta_token": ""
+        "okta_token": "",
+        "forcetalk_host": "",
     }
 
     uat_config = {
@@ -14,7 +15,8 @@ class Config:
         "platform_host": "",
         "okta_host": "",
         "token_path": "",
-        "okta_token": ""
+        "okta_token": "",
+      "forcetalk_host": "",
     }
 
     @classmethod
