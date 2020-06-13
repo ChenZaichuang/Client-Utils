@@ -1,6 +1,6 @@
 import requests
 
-from config import Config
+from .config import Config
 from python_utils.logger import CustomLogger
 from python_utils.misc import get_variable_from_local
 
