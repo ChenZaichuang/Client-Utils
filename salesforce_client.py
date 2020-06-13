@@ -2,7 +2,6 @@ import copy
 import random
 from collections import OrderedDict
 
-import requests
 from gevent import sleep
 from gevent.libev.corecext import traceback
 from requests.adapters import HTTPAdapter
@@ -11,6 +10,7 @@ from simple_salesforce import Salesforce
 from python_utils.logger import CustomLogger
 from python_utils.thread_pool import ThreadPool
 from .config import Config
+import requests
 
 
 class SalesforceClient:

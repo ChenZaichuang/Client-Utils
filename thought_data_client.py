@@ -1,7 +1,7 @@
 from .config import Config
 from python_utils.logger import CustomLogger
-import requests
 from gevent import sleep
+import requests
 
 
 class ThoughtDataClient:

@@ -2,8 +2,8 @@ import json
 
 from python_utils.logger import CustomLogger
 from .config import Config
-import requests
 from gevent import sleep
+import requests
 
 
 class ForcetalkClient:
