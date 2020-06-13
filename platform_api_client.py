@@ -21,14 +21,7 @@ class PlatformAPIClient:
         return "-".join(date.split("-")[::-1])
 
     def get_staffing_requests_by_opportunity_id(self, opportunity_id):
-        results = self.get_platform_data("api", f"sales-system-service/opportunities/{opportunity_id}/staffing-requests")
-        for res in results:
-            res["startDate"] = self._format_jigsaw_date(res["startDate"])
-            res["endDate"] = self._format_jigsaw_date(res["endDate"])
-            for office in res["workInOffices"]:
-                office["startDate"] = self._format_jigsaw_date(office["startDate"])
-                office["endDate"] = self._format_jigsaw_date(office["endDate"])
-        return results
+        return self.get_platform_data("api", f"sales-system-service/opportunities/{opportunity_id}/staffing-requests")['content']
 
     def get_assignments_by_opportunity_id(self, opportunity_id):
         results = self.get_platform_data("api ApiCommonReadAccess", f"jigsaw/assignments", f"opportunity_ids[]={opportunity_id}")
@@ -62,3 +55,6 @@ class PlatformAPIClient:
                                        'Authorization': f'Basic {self.okta_token}',
                                        'Content-Type': 'application/x-www-form-urlencoded'}
                                    ).json()['access_token']
+
+    def get_opportunity_by_id(self, opportunity_id):
+        return self.get_platform_data("api", f"sales-system-service/opportunities/{opportunity_id}")

@@ -29,17 +29,17 @@ class ForcetalkClient:
     def send_staffing_request_to_forcetalk(self, staffing_request):
         self.logger.info(f"send_staffing_request_to_forcetalk with {staffing_request}")
         data = {
-            "id": staffing_request['uuid'],
+            "id": staffing_request['id'],
             "project": {
-                'sf_id': staffing_request['project']['opportunityId']
+                'sf_id': staffing_request['opportunityId']
             },
             "startDate": staffing_request['startDate'],
             "endDate": staffing_request['endDate'],
             "probability": staffing_request['probability'],
             'effort': staffing_request['effort'],
-            "grade": staffing_request['grade']['name'],
-            "role": staffing_request['role']['name'],
-            "workingOffices": self.generate_working_offices(staffing_request['workInOffices'])
+            "grade": staffing_request['gradeName'],
+            "role": staffing_request['roleName'],
+            "workingOffices": self.generate_working_offices(staffing_request['workingOffices'])
         }
         forcetalk_url = f'{self.forcetalk_host}/forcetalk/ResourceRequest?checkEligible=false'
         headers = {"Accept": "application/json", "Content-type": "application/json"}
@@ -56,7 +56,7 @@ class ForcetalkClient:
 
     def generate_working_offices(self, working_offices):
         return [{
-            'name': office['name'],
+            'name': office['officeName'],
             'startDate': office['startDate'],
             'endDate': office['endDate'],
             'rate': float(office['rate']),

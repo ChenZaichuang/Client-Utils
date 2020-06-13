@@ -14,7 +14,7 @@ class ThoughtDataClient:
     def check_paused_subscriptions(self, subscription_name_list=None):
         for _ in range(3):
             try:
-                res = requests.get(f"{self.platform_host}/v1/subscription", headers={"x_api_key": self.x_api_key})
+                res = requests.get(f"{self.platform_host}/v1/subscription", headers={"x-api-key": self.x_api_key})
             except:
                 self.logger.error(f'failed to get_subscription_by_name: {subscription_name_list}')
                 sleep(5)
