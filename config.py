@@ -8,6 +8,7 @@ class Config:
         "token_path": "",
         "okta_token": "",
         "forcetalk_host": "",
+        "GOOGLE_APPLICATION_CREDENTIALS": "gcp_credentials_prod.json",
     }
 
     uat_config = {
@@ -16,7 +17,8 @@ class Config:
         "okta_host": "",
         "token_path": "",
         "okta_token": "",
-      "forcetalk_host": "",
+        "forcetalk_host": "",
+        "GOOGLE_APPLICATION_CREDENTIALS": "gcp_credentials_uat.json",
     }
 
     @classmethod

@@ -1,2 +1,4 @@
 requests
 simple_salesforce
+google-cloud-bigquery==1.10.0
+gcloud
