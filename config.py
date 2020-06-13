@@ -9,6 +9,8 @@ class Config:
         "okta_token": "",
         "forcetalk_host": "",
         "GOOGLE_APPLICATION_CREDENTIALS": "gcp_credentials_prod.json",
+        "thought_data_host": "",
+        "thought_data_x_api_key": "",
     }
 
     uat_config = {
@@ -19,6 +21,8 @@ class Config:
         "okta_token": "",
         "forcetalk_host": "",
         "GOOGLE_APPLICATION_CREDENTIALS": "gcp_credentials_uat.json",
+        "thought_data_host": "",
+        "thought_data_x_api_key": "",
     }
 
     @classmethod

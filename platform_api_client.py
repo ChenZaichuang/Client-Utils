@@ -12,7 +12,6 @@ class PlatformAPIClient:
         self.okta_host = Config.get_config(env, "okta_host")
         self.token_path = Config.get_config(env, "token_path")
         self.okta_token = Config.get_config(env, "okta_token")
-
         self.logger = CustomLogger()
 
     def get_assignment_by_ass_id(self, ass_id_list):

@@ -1,16 +1,15 @@
-from python_utils.thread_pool import ThreadPool
-from python_utils.logger import CustomLogger
-
-from collections import OrderedDict
 import copy
 import random
-import time
+from collections import OrderedDict
 
-from gevent.libev.corecext import traceback
 import requests
+from gevent import sleep
+from gevent.libev.corecext import traceback
 from requests.adapters import HTTPAdapter
 from simple_salesforce import Salesforce
 
+from python_utils.logger import CustomLogger
+from python_utils.thread_pool import ThreadPool
 from .config import Config
 
 
@@ -68,7 +67,7 @@ class SalesforceClient:
                 err_msg = traceback.format_exc()
                 if 'UNABLE_TO_LOCK_ROW' not in err_msg and 'ConcurrentPerOrgLongTxn Limit exceeded' not in err_msg:
                     raise RuntimeError(err_msg)
-                time.sleep(random.randint(2, 20))
+                sleep(random.randint(2, 20))
 
     def bulk_DML_records(self, object_api_name, operation, data):
         assert operation in ('insert', 'update', 'delete')
@@ -101,7 +100,7 @@ class SalesforceClient:
                 print('err_msg: ' + err_msg)
                 if 'UNABLE_TO_LOCK_ROW' not in err_msg and 'ConcurrentPerOrgLongTxn Limit exceeded' not in err_msg:
                     raise RuntimeError(err_msg)
-                time.sleep(random.randint(2, 20))
+                sleep(random.randint(2, 20))
 
     def dml_records(self, object_api_name, operation, data):
         assert operation in ('insert', 'update', 'delete')
