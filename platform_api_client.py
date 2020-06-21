@@ -1,5 +1,5 @@
 from .config import Config
-from python_utils.logger import CustomLogger
+from python_utils.logger import Logger
 from python_utils.misc import get_variable_from_local
 import requests
 
@@ -11,7 +11,6 @@ class PlatformAPIClient:
         self.okta_host = Config.get_config(env, "okta_host")
         self.token_path = Config.get_config(env, "token_path")
         self.okta_token = Config.get_config(env, "okta_token")
-        self.logger = CustomLogger()
 
     def get_assignment_by_ass_id(self, ass_id_list):
         return self.get_platform_data("api ApiCommonReadAccess", "jigsaw/assignments", "ids[]=" + "&ids[]=".join(ass_id_list))
@@ -30,7 +29,7 @@ class PlatformAPIClient:
         return results
 
     def get_platform_data(self, scope, path, params=None):
-        self.logger.info(f"get_platform_data with {path}")
+        Logger.debug(f"get_platform_data with {path}")
         for _ in range(3):
 
             res = requests.get(f"{self.platform_host}/{path}",
@@ -38,7 +37,7 @@ class PlatformAPIClient:
                          headers={'Authorization': f'bearer {self.get_token(scope)}'})
 
             if res.status_code != 200:
-                self.logger.error(f"Failed to get {path}, res: {res.status_code} | {res.text}")
+                Logger.error(f"Failed to get {path}, res: {res.status_code} | {res.text}")
             else:
                 return res.json()
 

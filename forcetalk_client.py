@@ -1,6 +1,6 @@
 import json
 
-from python_utils.logger import CustomLogger
+from python_utils.logger import Logger
 from .config import Config
 from gevent import sleep
 import requests
@@ -10,12 +10,11 @@ class ForcetalkClient:
 
     def __init__(self, env='uat'):
         self.forcetalk_host = Config.get_config(env, "forcetalk_host")
-        self.logger = CustomLogger()
 
     def delete_resource_request(self, res_req_id):
         forcetalk_url = f'{self.forcetalk_host}/forcetalk/ResourceRequest/{res_req_id}'
         headers = {"Accept": "application/json", "Content-type": "application/json"}
-        self.logger.info(f"delete_resource_request with {res_req_id}")
+        Logger.debug(f"delete_resource_request with {res_req_id}")
         res = None
         for _ in range(3):
             res = requests.delete(url=forcetalk_url, headers=headers)
@@ -27,7 +26,7 @@ class ForcetalkClient:
             raise RuntimeError(f"failed to delete_resource_request with {res_req_id}: {res.status_code} | {res.text}")
 
     def send_staffing_request_to_forcetalk(self, staffing_request):
-        self.logger.info(f"send_staffing_request_to_forcetalk with {staffing_request}")
+        Logger.debug(f"send_staffing_request_to_forcetalk with {staffing_request}")
         data = {
             "id": staffing_request['id'],
             "project": {
@@ -63,7 +62,7 @@ class ForcetalkClient:
         } for office in working_offices]
 
     def flag_as_daily_rate_project(self, opportunity_id):
-        self.logger.info(f"flag_as_daily_rate_project with {opportunity_id}")
+        Logger.debug(f"flag_as_daily_rate_project with {opportunity_id}")
 
         forcetalk_url = f'{self.forcetalk_host}/forcetalk/Project/flagAsDailyRateProject/{opportunity_id}'
         headers = {"Accept": "application/json", "Content-type": "application/json"}
@@ -79,7 +78,7 @@ class ForcetalkClient:
             raise RuntimeError(f"failed to flag_as_daily_rate_project with {opportunity_id}: {res.status_code} | {res.text}")
 
     def delete_assignment(self, ass_id):
-        self.logger.info(f"delete_assignment with {ass_id}")
+        Logger.debug(f"delete_assignment with {ass_id}")
 
         forcetalk_url = f'{self.forcetalk_host}/forcetalk/Assignment/{ass_id}'
         headers = {"Accept": "application/json", "Content-type": "application/json"}
@@ -95,7 +94,7 @@ class ForcetalkClient:
             raise RuntimeError(f"failed to delete_assignment with {ass_id}: {res.status_code} | {res.text}")
 
     def send_assignment_to_forcetalk(self, assignment):
-        self.logger.info(f"send_assignment_to_forcetalk with {assignment}")
+        Logger.debug(f"send_assignment_to_forcetalk with {assignment}")
         data = {
             "id": assignment['id'],
             "project": {
@@ -126,7 +125,7 @@ class ForcetalkClient:
             raise RuntimeError(f"failed to send_assignment_to_forcetalk with {assignment}: {res.status_code} | {res.text}")
 
     def flag_project_as_eligible_for_live_feed(self, opportunity_id):
-        self.logger.info(f"flagProjectAsEligibleForLiveFeed with {opportunity_id}")
+        Logger.debug(f"flagProjectAsEligibleForLiveFeed with {opportunity_id}")
 
         forcetalk_url = f'{self.forcetalk_host}/forcetalk/Project/flagForLiveFeed/{opportunity_id}'
         headers = {"Accept": "application/json", "Content-type": "application/json"}

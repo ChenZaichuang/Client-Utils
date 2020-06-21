@@ -7,7 +7,7 @@ from gevent.libev.corecext import traceback
 from requests.adapters import HTTPAdapter
 from simple_salesforce import Salesforce
 
-from python_utils.logger import CustomLogger
+from python_utils.logger import Logger
 from python_utils.thread_pool import ThreadPool
 from .config import Config
 import requests
@@ -23,7 +23,6 @@ class SalesforceClient:
         session.mount('https://', adapter)
         self.sf = Salesforce(**{**Config.get_config(env, "sf_oauth"), "session": session})
         self.pool = ThreadPool(total_thread_number=50)
-        self.logger = CustomLogger()
 
     def query_records(self, query_string, include_deleted=False, extract_fields_list=None, extract_fields_set=None, extract_field_map=None, extract_fields_list_map=None, extract_fields_set_map=None):
         while True:
@@ -75,7 +74,7 @@ class SalesforceClient:
         res = getattr(getattr(self.sf.bulk, object_api_name), operation)(data)
         for index, result in enumerate(res):
             if not result['success']:
-                self.logger.error(f'delete failed {data[index]} | {str(result)}')
+                Logger.error(f'delete failed {data[index]} | {str(result)}')
 
     def _dml_record(self, object_api_name, operation, data):
         assert operation in ('insert', 'update', 'delete')
@@ -84,13 +83,13 @@ class SalesforceClient:
                 copied_data = copy.deepcopy(data)
                 if 'insert' == operation:
                     res = getattr(self.sf, object_api_name).create(copied_data)
-                    self.logger.info(f'{object_api_name} {operation}: {res}')
+                    Logger.debug(f'{object_api_name} {operation}: {res}')
                     return res['id']
                 elif 'update' == operation:
                     rec_id = copied_data['Id']
                     del copied_data['Id']
                     res = getattr(self.sf, object_api_name).update(rec_id, copied_data)
-                    self.logger.info(f'{object_api_name} {operation}: {res}')
+                    Logger.debug(f'{object_api_name} {operation}: {res}')
                     assert int(res) < 400
                     return res
                 else:
@@ -105,7 +104,7 @@ class SalesforceClient:
     def dml_records(self, object_api_name, operation, data):
         assert operation in ('insert', 'update', 'delete')
         assert type(data) is dict or type(data) is list or type(data) is OrderedDict
-        self.logger.info(f'{object_api_name} {operation}: {data}')
+        Logger.debug(f'{object_api_name} {operation}: {data}')
         if type(data) is dict or type(data) is OrderedDict:
             return self._dml_record(object_api_name, operation, data)
         elif len(data) > 0:

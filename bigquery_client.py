@@ -2,7 +2,7 @@ import os
 
 from google.cloud import bigquery
 
-from python_utils.logger import CustomLogger
+from python_utils.logger import Logger
 from python_utils.thread_pool import ThreadPool
 from .config import Config
 
@@ -11,7 +11,6 @@ class BigqueryClient:
 
     def __init__(self, env='uat'):
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = f'client_utils/{Config.get_config(env, "GOOGLE_APPLICATION_CREDENTIALS")}'
-        self.logger = CustomLogger()
 
     def load_csv_file_into_bigquery(self, dataset_id, table_id, file_name, schema):
         client = bigquery.Client()
@@ -33,7 +32,7 @@ class BigqueryClient:
                 job_config=job_config,
             )
         job.result()
-        self.logger.info(f"op=load-csv-file-into-bigquery | status=OK | desc=Loaded {job.output_rows} rows into {dataset_id}:{table_id}")
+        Logger.debug(f"op=load-csv-file-into-bigquery | status=OK | desc=Loaded {job.output_rows} rows into {dataset_id}:{table_id}")
 
     def query_rows_from_bigquery(self, query_string):
         client = bigquery.Client()
@@ -47,7 +46,7 @@ class BigqueryClient:
         if errors:
             raise RuntimeError(f"op=write_rows_to_bigquery | status=OK| desc=dataset_id: {dataset_id}, table_id: {table_id}, rows_to_insert: {str(rows_to_insert)}, errors: {str(errors)}")
         else:
-            self.logger.info(f"op=write_rows_to_bigquery | status=OK | desc=dataset_id: {dataset_id}, table_id: {table_id}, rows_to_insert: {str(rows_to_insert)}")
+            Logger.debug(f"op=write_rows_to_bigquery | status=OK | desc=dataset_id: {dataset_id}, table_id: {table_id}, rows_to_insert: {str(rows_to_insert)}")
 
     def create_dataset(self, dataset_id):
         client = bigquery.Client()
