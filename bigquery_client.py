@@ -71,7 +71,7 @@ class BigqueryClient:
             tables = list(client.list_tables(dataset_id))
             for table in tables:
                 thread_results.append(thread_pool.apply_async(self.delete_table, (dataset_id, table.table_id,)))
-        thread_pool.get_results_order_by_index()
+        thread_pool.wait_all_threads(raise_exception=True)
 
     def delete_table(self, dataset_id, table_id):
         client = bigquery.Client()
