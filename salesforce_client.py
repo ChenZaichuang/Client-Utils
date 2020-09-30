@@ -46,11 +46,11 @@ class SalesforceClient:
         self.sf = Salesforce(**{**Config.get_config(env, "sf_oauth"), "session": session})
         self.pool = ThreadPool(total_thread_number=10)
 
-    @salesforce_timeout_retry
+    @salesforce_timeout_retry()
     def query_with_timeout(self, query_string):
         return self.sf.query(query_string, include_deleted=False)
 
-    @salesforce_timeout_retry
+    @salesforce_timeout_retry()
     def query_more_with_timeout(self, next_records_identifier):
         return self.sf.query_more(next_records_identifier, identifier_is_url=True)
 
@@ -89,7 +89,7 @@ class SalesforceClient:
             if not result['success']:
                 Logger.error(f'delete failed {data[index]} | {str(result)}')
 
-    @salesforce_timeout_retry
+    @salesforce_timeout_retry()
     def _dml_record(self, object_api_name, operation, data):
         assert operation in ('insert', 'update', 'delete')
         copied_data = copy.deepcopy(data)
